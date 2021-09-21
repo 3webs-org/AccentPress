@@ -1,5 +1,6 @@
 {
     "name": "Accent Press",
+    "summary": "Accent Press is a simple Chrome Extension that allows you to easily write accents.",
     "version": "1.0",
     "manifest_version": 3,
     "content_scripts": [
