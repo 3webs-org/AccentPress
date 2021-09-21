@@ -15,7 +15,7 @@ jobs:
       
       - uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
-          extensionDir: ${{ env.GITHUB_WORKSPACE }}
+          extensionDir: ${{ GITHUB_WORKSPACE }}
           zipFilePath: 'build/extension.zip'
 
       - uses: cardinalby/webext-buildtools-chrome-crx-action@v2
