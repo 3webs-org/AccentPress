@@ -12,10 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          path: extension
       
       - uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
-          extensionDir: ${{ GITHUB_WORKSPACE }}
+          extensionDir: 'extension'
           zipFilePath: 'build/extension.zip'
 
       - uses: cardinalby/webext-buildtools-chrome-crx-action@v2
