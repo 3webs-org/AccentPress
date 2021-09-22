@@ -46,3 +46,4 @@ jobs:
           cmd: lint
           source: .
           channel: unlisted
+          verbose: true
