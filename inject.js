@@ -28,4 +28,4 @@ fetch(remote).then(res => res.json()).then(mappings => {
 		active[e.key] = false;
 		toggle[e.key] = 0;
 	});
-}).catch(err => throw err);
+});
