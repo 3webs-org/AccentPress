@@ -1,4 +1,4 @@
-name: Build CRX
+name: CI
 
 on:
   push:
@@ -44,5 +44,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           cmd: lint
-          source: src
-          channel: listed
+          source: .
+          channel: unlisted
