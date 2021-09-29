@@ -24,6 +24,7 @@
   });
 
   function addEventListeners(element, type, handler) {
+    if (!element) return;
     try {
       element.addEventListener(type, handler);
     } catch {}
