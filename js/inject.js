@@ -1,8 +1,16 @@
 let remote = "https://pandapip1.github.io/AccentPress/config/accents.json";
 fetch(remote).then(res => res.json()).then(raw_mappings => {
 	let mappings = {};
-	chrome.storage.sync.get('langs', function(data) {
-		Object.keys(raw_mappings).filter(lang => data.langs.indexOf(lang) > -1).forEach(lang => {
+	let langs = [
+		"fr"
+	];
+	let speed = 4;
+	chrome.storage.sync.get(['langs', 'options'], function(data) {
+		if (data && data.options && data.options.speed)
+			speed = data.options.speed;
+		if (data && data.langs)
+			langs = data.langs;
+		Object.keys(raw_mappings).filter(lang => langs.indexOf(lang) > -1).forEach(lang => {
 			raw_mappings[lang].forEach(letters => {
 				let baselet = letters[0];
 				let baseletU = letters[0].toUpperCase();
@@ -41,7 +49,7 @@ fetch(remote).then(res => res.json()).then(raw_mappings => {
 			if (!replacement) return;
 			e.preventDefault();
 			if (!toggle[e.key]) toggle[e.key] = 0;
-			toggle[e.key] = (toggle[e.key] + 1) % 4;
+			toggle[e.key] = (toggle[e.key] + 1) % speed;
 			if (toggle[e.key]) return;
 			e.target.selectionStart -= 1;
 			var start = e.target.selectionStart;
