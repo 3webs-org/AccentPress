@@ -22,13 +22,13 @@ fetch(remote).then(res => res.json()).then(raw_mappings => {
 				}
 				letters.forEach(letter => {
 					let letterU = letter.toUpperCase();
-					if (!mappings[baselet]][letter]) Object.keys(mappings[baselet]).forEach(letter2replace => {
+					if (!mappings[baselet][letter]) Object.keys(mappings[baselet]).forEach(letter2replace => {
 						if (mappings[baselet][letter2replace] == baselet){
 							mappings[baselet][letter2replace] = letter;
 							mappings[baselet][letter] = baselet;
 						}
 					});
-					if (!mappings[baseletU]][letterU]) Object.keys(mappings[baseletU]).forEach(letter2replace => {
+					if (!mappings[baseletU][letterU]) Object.keys(mappings[baseletU]).forEach(letter2replace => {
 						if (mappings[baseletU][letter2replace] == baseletU){
 							mappings[baseletU][letter2replace] = letterU;
 							mappings[baseletU][letter] = baseletU;
