@@ -1,4 +1,4 @@
-document.onload = async () => {
+(async () => {
   let langs = [
     'fr'
   ];
@@ -49,4 +49,4 @@ document.onload = async () => {
       options: options
     });
   });
-}
+})();
