@@ -5,12 +5,16 @@
     <link rel="stylesheet" href="/css/popup.css"/>
   </head>
   <body>
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="switch-fr">
-      <label class="form-check-label" for="switch-fr">French Accents</label>
-    </div>
-    <label for="speed" class="form-label">Speed:</label>
-    <input type="range" class="form-range" min="1" max="5" id="speed">
+    <form id="languagesForm">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="fr" name="fr">
+        <label class="form-check-label" for="fr">French Accents</label>
+      </div>
+    </form>
+    <form id="optionsForm">
+      <label for="speed" class="form-label">Speed:</label>
+      <input type="range" class="form-range" min="1" max="5" id="speed">
+    </form>
     <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="/js/popup.js"></script>
   </body>
