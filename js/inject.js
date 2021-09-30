@@ -31,7 +31,7 @@ fetch(remote).then(res => res.json()).then(raw_mappings => {
 					if (!mappings[baseletU][letterU]) Object.keys(mappings[baseletU]).forEach(letter2replace => {
 						if (mappings[baseletU][letter2replace] == baseletU){
 							mappings[baseletU][letter2replace] = letterU;
-							mappings[baseletU][letter] = baseletU;
+							mappings[baseletU][letterU] = baseletU;
 						}
 					});
 				});
