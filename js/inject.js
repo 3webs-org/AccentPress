@@ -1,5 +1,4 @@
-let remote = "https://pandapip1.github.io/AccentPress/config/accents.json";
-fetch(remote).then(res => res.json()).then(raw_mappings => {
+fetch("https://pandapip1.github.io/AccentPress/config/accents.json").then(res => res.json()).then(raw_mappings => {
 	let mappings = {};
 	let langs = [
 		"fr"
@@ -7,7 +6,7 @@ fetch(remote).then(res => res.json()).then(raw_mappings => {
 	let speed = 4;
 	chrome.storage.sync.get(['langs', 'options'], function(data) {
 		if (data && data.options && data.options.speed)
-			speed = data.options.speed;
+			speed = parseInt(data.options.speed);
 		if (data && data.langs)
 			langs = data.langs;
 		Object.keys(raw_mappings).filter(lang => langs.indexOf(lang) > -1).forEach(lang => {
@@ -40,17 +39,20 @@ fetch(remote).then(res => res.json()).then(raw_mappings => {
 		// Actual extension
 		let active = {};
 		let toggle = {};
+		let prev = 0;
 		document.addEventListener("keydown", e => {
+			// Select only events that should be captured
 			if (!e || !e.key || !e.target || !("selectionStart" in e.target) || !("value" in e.target) || !(e.key in mappings)) return;
 			let isActive = active[e.key];
 			active[e.key] = true;
 			if (!isActive) return;
 			let replacement = mappings[e.key][e.target.value[e.target.selectionStart-1]];
 			if (!replacement) return;
+			// Only toggle letter every speed
 			e.preventDefault();
-			if (!toggle[e.key]) toggle[e.key] = 0;
-			toggle[e.key] = (toggle[e.key] + 1) % speed;
-			if (toggle[e.key]) return;
+			if (new Date().getTime() < prev + speed*120) return;
+			prev = new Date().getTime();
+			// Replace letter
 			e.target.selectionStart -= 1;
 			var start = e.target.selectionStart;
 			var finish = e.target.selectionEnd;
