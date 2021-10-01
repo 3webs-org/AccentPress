@@ -18,6 +18,14 @@
         });
         return "Saved";
       }
+    },
+    watch: {
+      $data: {
+          handler: function(val, oldVal) {
+              alert(JSON.stringify(val));
+          },
+          deep: true
+      }
     }
   });
 
