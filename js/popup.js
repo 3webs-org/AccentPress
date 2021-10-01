@@ -12,6 +12,10 @@
           langs: this.langs,
           options: this.options
         });
+        alert(JSON.stringify({
+          langs: this.langs,
+          options: this.options
+        }));
         return "Saved";
       }
     }
