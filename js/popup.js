@@ -22,13 +22,19 @@
     watch: {
       langs: {
         handler: function(val, oldVal) {
-          alert(JSON.stringify(val));
+          alert(JSON.stringify({
+          langs: this.langs,
+          options: this.options
+        }));
         },
         deep: true
       },
       options: {
         handler: function(val, oldVal) {
-          alert(JSON.stringify(val));
+          alert(JSON.stringify({
+          langs: this.langs,
+          options: this.options
+        }));
         },
         deep: true
       }
