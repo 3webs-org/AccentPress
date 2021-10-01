@@ -1,4 +1,4 @@
-fetch("https://pandapip1.github.io/AccentPress/config/accents.json").then(res => res.json()).then(raw_mappings => {
+fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json()).then(raw_mappings => {
 	let mappings = {};
 	let langs = [
 		"fr"
