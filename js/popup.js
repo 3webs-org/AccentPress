@@ -20,11 +20,17 @@
       }
     },
     watch: {
-      $data: {
-          handler: function(val, oldVal) {
-              alert(JSON.stringify(val));
-          },
-          deep: true
+      langs: {
+        handler: function(val, oldVal) {
+          alert(JSON.stringify(val));
+        },
+        deep: true
+      },
+      options: {
+        handler: function(val, oldVal) {
+          alert(JSON.stringify(val));
+        },
+        deep: true
       }
     }
   });
