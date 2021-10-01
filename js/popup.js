@@ -6,35 +6,22 @@
       langs: [ 'fr' ],
       options: { speed: 4 }
     },
-    computed: {
-      update: function(){
-        alert(JSON.stringify({
-          langs: this.langs,
-          options: this.options
-        }));
-        chrome.storage.sync.set({
-          langs: this.langs,
-          options: this.options
-        });
-        return "Saved";
-      }
-    },
     watch: {
       langs: {
         handler: function(val, oldVal) {
-          alert(JSON.stringify({
-          langs: this.langs,
-          options: this.options
-        }));
+          chrome.storage.sync.set({
+            langs: this.langs,
+            options: this.options
+          });
         },
         deep: true
       },
       options: {
         handler: function(val, oldVal) {
-          alert(JSON.stringify({
-          langs: this.langs,
-          options: this.options
-        }));
+          chrome.storage.sync.set({
+            langs: this.langs,
+            options: this.options
+          });
         },
         deep: true
       }
