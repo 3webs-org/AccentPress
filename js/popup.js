@@ -8,14 +8,14 @@
     },
     computed: {
       update: function(){
-        chrome.storage.sync.set({
-          langs: this.langs,
-          options: this.options
-        });
         alert(JSON.stringify({
           langs: this.langs,
           options: this.options
         }));
+        chrome.storage.sync.set({
+          langs: this.langs,
+          options: this.options
+        });
         return "Saved";
       }
     }
