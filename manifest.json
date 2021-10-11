@@ -11,13 +11,17 @@
     "permissions": [
         "storage"
     ],
+    "background": {
+        "scripts": ["js/background.js"],
+        "persistent": true
+    },
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
             "js": ["js/inject.js"]
         }
     ],
-    "action": {
-        "default_popup": "html/popup.html"
+    "externally_connectable": {
+      "matches": ["https://accentpress.pandapip1.com/*"]
     }
 }
