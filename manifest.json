@@ -12,7 +12,7 @@
         "storage"
     ],
     "background": {
-        "scripts": ["js/background.js"],
+        "service_worker": ["js/background.js"],
         "persistent": true
     },
     "content_scripts": [
