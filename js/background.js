@@ -17,6 +17,6 @@ chrome.runtime.onMessageExternal.addListener(
   }
 );
 
-chrome.browserAction.onClicked.addListener(function(tab) {
+chrome.action.onClicked.addListener(function(tab) {
     chrome.tabs.create({'url': "https://accentpress.pandapip1.com/html/popup.html", 'selected': true});
 });
