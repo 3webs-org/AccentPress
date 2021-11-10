@@ -1,5 +1,5 @@
 (async () => {
-  const cache = await chrome.storage.local.get([ 'cache' ]);
+  const cache = await chrome.storage.local.get('cache');
   const settings = await chrome.storage.sync.get(null);
   const defaults = (cache && 'defaults' in cache) ? cache.defaults : await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
   const raw_mappings = (cache && 'raw_mappings' in cache) ? cache.raw_mappings : await fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json());
@@ -25,7 +25,7 @@
       speed: speed
     }
   });
-  
+  // Update Mappings
   const mappings = {};
   
   function addAccent(baselet, letter) {
