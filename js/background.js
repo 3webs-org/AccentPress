@@ -6,6 +6,6 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     await chrome.storage.sync.set(request.storage_data);
     sendResponse({ success: true });
   }
-);
+});
 
 chrome.action.onClicked.addListener(() => chrome.tabs.create({'url': "https://accentpress.pandapip1.com/html/popup.html", 'selected': true}));
