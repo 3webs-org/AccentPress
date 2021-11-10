@@ -40,10 +40,10 @@ jobs:
           rm -rf extension/config
           rm -rf extension/css
           rm -rf extension/html
-          rm -rf .github
+          rm -rf extension/.github
           rm -f extension/js/popup.js
-          rm -f CNAME
-          rm -f README.md
+          rm -f extension/CNAME
+          rm -f extension/README.md
       
       - uses: papeloto/action-zip@v1
         with:
@@ -52,5 +52,5 @@ jobs:
       
       - uses: actions/upload-artifact@v2
         with:
-          name: extension.zip
+          name: extension
           path: extension.zip
