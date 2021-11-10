@@ -1,72 +1,81 @@
-fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json()).then(raw_mappings => {
-	let mappings = {};
-	let langs = [
-		"fr"
-	];
-	let speed = 4;
-	chrome.storage.sync.get(['langs', 'options'], function(data) {
-		if (data && data.options && data.options.speed)
-			speed = parseInt(data.options.speed);
-		if (data && data.langs)
-			langs = data.langs;
-		Object.keys(raw_mappings).filter(lang => langs.indexOf(lang) > -1).forEach(lang => {
-			raw_mappings[lang].forEach(letters => {
-				let baselet = letters[0];
-				let baseletU = letters[0].toUpperCase();
-				if (!mappings[letters[0]]){
-					mappings[baselet] = {};
-					mappings[baseletU] = {};
-					mappings[baselet][baselet] = baselet;
-					mappings[baseletU][baseletU] = baseletU;
-				}
-				letters.forEach(letter => {
-					let letterU = letter.toUpperCase();
-					if (!mappings[baselet][letter]) Object.keys(mappings[baselet]).forEach(letter2replace => {
-						if (mappings[baselet][letter2replace] == baselet){
-							mappings[baselet][letter2replace] = letter;
-							mappings[baselet][letter] = baselet;
-						}
-					});
-					if (!mappings[baseletU][letterU]) Object.keys(mappings[baseletU]).forEach(letter2replace => {
-						if (mappings[baseletU][letter2replace] == baseletU){
-							mappings[baseletU][letter2replace] = letterU;
-							mappings[baseletU][letterU] = baseletU;
-						}
-					});
-				});
-			});
-		});
-		// Actual extension
-		let active = {};
-		let toggle = {};
-		let prev = 0;
-		document.addEventListener("keydown", e => {
-			// Select only events that should be captured
-			if (!e || !e.key || !e.target || !("selectionStart" in e.target) || !("value" in e.target) || !(e.key in mappings)) return;
-			let isActive = active[e.key];
-			active[e.key] = true;
-			if (!isActive) return;
-			let replacement = mappings[e.key][e.target.value[e.target.selectionStart-1]];
-			if (!replacement) return;
-			// Only toggle letter every speed
-			e.preventDefault();
-			if (new Date().getTime() < prev + speed*120) return;
-			prev = new Date().getTime();
-			// Replace letter
-			e.target.selectionStart -= 1;
-			var start = e.target.selectionStart;
-			var finish = e.target.selectionEnd;
-			var allText = e.target.value;
-			var sel = allText.substring(start, finish);
-			var newText = allText.substring(0, start)+replacement+allText.substring(finish, allText.length);
-			e.target.value=newText;
-			e.target.selectionStart = finish;
-			e.target.selectionEnd = finish;
-		});
-
-		document.addEventListener("keyup", e => {
-			active[e.key] = false;
-			toggle[e.key] = 0;
-		});
-	});
-});
+(async () => {
+  const cache = await chrome.storage.local.get([ 'cache' ]);
+  const settings = await chrome.storage.sync.get(null);
+  const defaults = (cache && 'defaults' in cache) ? cache.defaults : await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+  const raw_mappings = (cache && 'raw_mappings' in cache) ? cache.raw_mappings : await fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json());
+  // Update defaults & raw_mappings
+  await (async () => {
+    const u_defaults = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+    const u_raw_mappings = await fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json());
+    chrome.storage.local.set({
+      cache: {
+        defaults: u_defaults,
+        raw_mappings: raw_mappings
+      }
+    });
+  })().catch(() => {});
+  
+  const speed = (settings && 'options' in settings && 'speed' in settings.options) ? parseInt(settings.options.speed) : defaults.options.speed;
+  const langs = (settings && 'langs' in settings) ? defaults.langs : defaults.langs;
+  
+  // Store it
+  chrome.storage.sync.set({
+    langs: langs,
+    options: {
+      speed: speed
+    }
+  });
+  
+  const mappings = {};
+  
+  function addAccent(baselet, letter) {
+    if (!mappings[baselet]) {
+      mappings[baselet] = {};
+      mappings[baselet][baselet] = baselet;
+    }
+    
+    if (!mappings[baselet][letter]) Object.keys(mappings[baselet]).forEach(letter2replace => {
+      if (mappings[baselet][letter2replace] == baselet) {
+        mappings[baselet][letter2replace] = letter;
+        mappings[baselet][letter] = baselet;
+      }
+    });
+  }
+  
+  const raw_mappings_filt = Object.keys(raw_mappings).filter(lang => langs.indexOf(lang) > -1).map(lang => raw_mappings[lang]);
+  raw_mappings_filt.forEach(lang => lang.forEach(letters => letters.forEach(letter => addAccent(letters[0], letter))));
+  raw_mappings_filt.forEach(lang => lang.forEach(letters => letters.forEach(letter => addAccent(letters[0].toUpperCase(), letter.toUpperCase()))));
+  
+  // Actual extension
+  const active = {};
+  const toggle = {};
+  let prev = 0;
+  document.addEventListener("keydown", e => {
+    // Select only events that should be captured
+    if (!e || !e.key || !e.target || !("selectionStart" in e.target) || !("value" in e.target) || !(e.key in mappings)) return;
+    let isActive = active[e.key];
+    active[e.key] = true;
+    if (!isActive) return;
+    let replacement = mappings[e.key][e.target.value[e.target.selectionStart-1]];
+    if (!replacement) return;
+    // Only toggle letter every speed
+    e.preventDefault();
+    if (new Date().getTime() < prev + speed*120) return;
+    prev = new Date().getTime();
+    // Replace letter
+    e.target.selectionStart -= 1;
+    var start = e.target.selectionStart;
+    var finish = e.target.selectionEnd;
+    var allText = e.target.value;
+    var sel = allText.substring(start, finish);
+    var newText = allText.substring(0, start)+replacement+allText.substring(finish, allText.length);
+    e.target.value = newText;
+    e.target.selectionStart = finish;
+    e.target.selectionEnd = finish;
+  });
+  
+  document.addEventListener("keyup", e => {
+    active[e.key] = false;
+    toggle[e.key] = 0;
+  });
+})();
