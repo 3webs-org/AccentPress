@@ -1,7 +1,7 @@
 (async () => {
   var accentPressId = "nfcdcdoegfnidkeldipgmhbabmndlhbf";
   
-  var defaultOpts = await fetch("https://accentpress.pandapip1.com/config/languages.json").then(res => res.json());
+  var defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
   
   var app = new Vue({
     el: '#app',
