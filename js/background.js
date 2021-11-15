@@ -7,5 +7,3 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     sendResponse({ success: true });
   }
 });
-
-chrome.action.onClicked.addListener(() => chrome.tabs.create({'url': "https://accentpress.pandapip1.com/html/popup.html", 'selected': true}));

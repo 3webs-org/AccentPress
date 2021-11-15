@@ -16,7 +16,8 @@
             "16": "icons/icon16-transparent.png",
             "48": "icons/icon48-transparent.png",
             "128": "icons/icon128-transparent.png"
-        }
+        },
+        "default_popup": "html/extension_settings.html"
     },
     "background": {
         "service_worker": "js/background.js"
