@@ -16,19 +16,20 @@
   })().catch(() => {});
   
   const speed = (settings && 'options' in settings && 'speed' in settings.options) ? parseInt(settings.options.speed) : defaults.options.speed;
-  
   let og_langs = (settings && 'langs' in settings) ? settings.langs : defaults.langs;
-  let opengraph_lang = document.querySelector("meta[property='og:locale']").getAttribute('content');
-  if (opengraph_lang) og_langs.push(opengraph_lang);
-  const langs = og_langs;
   
   // Store it
-  chrome.storage.sync.set({
-    langs: langs,
+  await chrome.storage.sync.set({
+    langs: og_langs,
     options: {
       speed: speed
     }
   });
+  
+  let opengraph_lang = document.querySelector("meta[property='og:locale']").getAttribute('content');
+  if (opengraph_lang) og_langs.push(opengraph_lang);
+  if (document.documentElement.lang) og_langs.push(document.documentElement.lang);
+  const langs = og_langs;
   // Update Mappings
   const mappings = {};
   
