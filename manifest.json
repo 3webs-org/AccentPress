@@ -25,7 +25,8 @@
         {
             "matches": ["<all_urls>"],
             "js": ["js/inject.js"]
-        }
+        },
+        "default_popup": "html/extension_settings.html"
     ],
     "externally_connectable": {
       "matches": ["https://accentpress.pandapip1.com/*"]
