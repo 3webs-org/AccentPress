@@ -36,14 +36,14 @@ jobs:
       
       - name: "Remove unnecesary files"
         run: |
-          rm -rf extension/vendor
-          rm -rf extension/config
-          rm -rf extension/css
-          rm -rf extension/html
-          rm -rf extension/.github
+          rm -f extension/html/popup.html
+          rm -f extension/css/popup.css
           rm -f extension/js/popup.js
           rm -f extension/CNAME
           rm -f extension/README.md
+          rm -rf extension/vendor
+          rm -rf extension/config
+          rm -rf extension/.github
       
       - uses: actions/upload-artifact@v2
         with:
