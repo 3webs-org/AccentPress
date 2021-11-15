@@ -16,7 +16,11 @@
   })().catch(() => {});
   
   const speed = (settings && 'options' in settings && 'speed' in settings.options) ? parseInt(settings.options.speed) : defaults.options.speed;
-  const langs = (settings && 'langs' in settings) ? settings.langs : defaults.langs;
+  
+  let og_langs = (settings && 'langs' in settings) ? settings.langs : defaults.langs;
+  let opengraph_lang = document.querySelector("meta[property='og:locale']").getAttribute('content');
+  if (opengraph_lang) og_langs.push(opengraph_lang);
+  const langs = og_langs;
   
   // Store it
   chrome.storage.sync.set({
