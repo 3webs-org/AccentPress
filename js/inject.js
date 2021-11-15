@@ -10,7 +10,7 @@
     chrome.storage.local.set({
       cache: {
         defaults: u_defaults,
-        raw_mappings: raw_mappings
+        raw_mappings: u_raw_mappings
       }
     });
   })().catch(() => {});
