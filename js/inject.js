@@ -1,30 +1,19 @@
 (async () => {
+  chrome.storage.local.set({
+    cache: {
+      defaults: await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json()),
+      raw_mappings: await fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json())
+    }
+  }).catch(() => {});
+})();
+(async () => {
   const cache = (await chrome.storage.local.get('cache')).cache;
   const settings = await chrome.storage.sync.get(null);
   const defaults = (cache && 'defaults' in cache) ? cache.defaults : await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
   const raw_mappings = (cache && 'raw_mappings' in cache) ? cache.raw_mappings : await fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json());
-  // Update defaults & raw_mappings
-  await (async () => {
-    const u_defaults = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-    const u_raw_mappings = await fetch("https://accentpress.pandapip1.com/config/accents.json").then(res => res.json());
-    chrome.storage.local.set({
-      cache: {
-        defaults: u_defaults,
-        raw_mappings: u_raw_mappings
-      }
-    });
-  })().catch(() => {});
   
   const speed = (settings && 'options' in settings && 'speed' in settings.options) ? parseInt(settings.options.speed) : defaults.options.speed;
   let og_langs = (settings && 'langs' in settings) ? settings.langs : defaults.langs;
-  
-  // Store it
-  await chrome.storage.sync.set({
-    langs: og_langs,
-    options: {
-      speed: speed
-    }
-  });
   
   let opengraph_lang = document.querySelector("meta[property='og:locale']").getAttribute('content');
   if (opengraph_lang) og_langs.push(opengraph_lang);
