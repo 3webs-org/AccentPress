@@ -35,6 +35,15 @@ async function track(event, props) {
   }).then(response => response.json());
 }
 
+chrome.runtime.onInstalled.addListener(function(details) {
+    if (details.reason == "install") {
+        var uninstallUrlLink = 'https://forms.gle/h2djLMjEC88oK1vq9';
+        if (chrome.runtime.setUninstallURL) {
+            chrome.runtime.setUninstallURL(uninstallUrlLink);
+        }
+    }
+});
+
 chrome.runtime.onMessageExternal.addListener(async (request, sender, sendResponse) => {
   if (request.type == "GET_DATA") {
     // Fetch data
