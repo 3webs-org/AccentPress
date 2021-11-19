@@ -39,17 +39,17 @@ let app = new Vue({
 
 (async () => {
   app.langConfig = await fetch("https://accentpress.pandapip1.com/config/languages.json").then(res => res.json());
-})();
-(async () => {
-  let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-  if (!app.langs) app.langs = defaultOpts.langs;
-  if (!app.options.speed) app.options = defaultOpts.options;
-})();
-(async () => {
-  try {
-    let settings = await getData(app.accentPressId);
-    app.detected = true;
-    if (settings && settings.langs) app.langs = settings.langs;
-    if (settings && settings.options) app.options = settings.options;
-  } catch { }
+  (async () => {
+    let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+    if (!app.langs.length) app.langs = defaultOpts.langs;
+    if (!app.options.speed) app.options = defaultOpts.options;
+  })();
+  (async () => {
+    try {
+      let settings = await getData(app.accentPressId);
+      app.detected = true;
+      if (settings && settings.langs) app.langs = settings.langs;
+      if (settings && settings.options) app.options = settings.options;
+    } catch { }
+  })();
 })();
