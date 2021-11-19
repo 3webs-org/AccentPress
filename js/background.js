@@ -54,9 +54,9 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     sendResponse({
       success: true,
       storage_data: {
-        langs: storage_data.langs,
+        langs: storage_data.langs ? storage_data.langs : null,
         options: {
-          speed: storage_data.options.speed
+          speed: storage_data.options.speed ? storage_data.options.speed : null
         }
       }
     });
