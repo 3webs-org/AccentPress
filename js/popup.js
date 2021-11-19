@@ -34,6 +34,17 @@ let app = new Vue({
       handler: () => app.detected ? setData(app.accentPressId, { langs: app.langs, options: app.options }) : null,
       deep: true
     }
+  },
+  methods: {
+    reset: () => {
+      chrome.runtime.sendMessage(
+        app.accentPressId,
+        {
+          type: "RESET_DATA"
+        },
+        response => response.success ? resolutionFunc() : rejectionFunc()
+      )
+    }
   }
 });
 
