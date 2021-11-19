@@ -1,66 +1,55 @@
-(async () => {
-  var accentPressId = "nfcdcdoegfnidkeldipgmhbabmndlhbf";
-  
-  var defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-  
-  var app = new Vue({
-    el: '#app',
-    data: {
-      langConfig: await fetch("https://accentpress.pandapip1.com/config/languages.json").then(res => res.json()),
-      langs: defaultOpts.langs,
-      options: defaultOpts.options,
-      detected: false
-    },
-    watch: {
-      langs: {
-        handler: function(val, oldVal) {
-          chrome.runtime.sendMessage(
-            accentPressId,
-            {
-              type: "SET_DATA",
-              storage_data: {
-                langs: this.langs,
-                options: this.options
-              }
-            },
-            function(response) { }
-          );
-        },
-        deep: true
-      },
-      options: {
-        handler: function(val, oldVal) {
-          chrome.runtime.sendMessage(
-            accentPressId,
-            {
-              type: "SET_DATA",
-              storage_data: {
-                langs: this.langs,
-                options: this.options
-              }
-            },
-            function(response) { }
-          );
-        },
-        deep: true
-      }
-    }
-  });
+let setData = (accentPressId, storage_data) => new Promise((resolutionFunc, rejectionFunc) => chrome.runtime.sendMessage(
+  accentPressId,
+  {
+    type: "SET_DATA",
+    storage_data: storage_data
+  },
+  response => response.success ? resolutionFunc() : rejectionFunc()
+));
+let getData = (accentPressId) => new Promise((resolutionFunc, rejectionFunc) => chrome.runtime.sendMessage(
+  accentPressId,
+  {
+    type: "GET_DATA"
+  },
+  response => response.success ? resolutionFunc(response.storage_data) : rejectionFunc()
+));
 
-  chrome.runtime.sendMessage(
-    accentPressId,
-    {
-      type: "GET_DATA"
+let app = new Vue({
+  el: '#app',
+  data: {
+    langConfig: {},
+    langs: [],
+    options: {
+      speed: 0
     },
-    function(response) {
-      if (response.success){
-        let data = response.storage_data;
-        if (data && data.langs)
-          app.langs = data.langs;
-        if (data && data.options)
-          app.options = data.options;
-        app.detected = true;
-      }
+    accentPressId: "nfcdcdoegfnidkeldipgmhbabmndlhbf",
+    detected: false
+  },
+  watch: {
+    langs: {
+      handler: () => app.detected ? setData(app.accentPressId, { langs: app.langs, options: app.options }) : null,
+      deep: true
+    },
+    options: {
+      handler: () => app.detected ? setData(app.accentPressId, { langs: app.langs, options: app.options }) : null,
+      deep: true
     }
-  );
+  }
+});
+
+(async () => {
+  app.langConfig = await fetch("https://accentpress.pandapip1.com/config/languages.json").then(res => res.json());
+})();
+(async () => {
+  let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+  if (!app.langs) app.langs = defaultOpts.langs;
+  if (!app.options) app.options = defaultOpts.options;
+})();
+(async () => {
+  try {
+    let settings = await getData();
+    app.detected = true;
+    if (settings && settings.langs) app.langs = settings.langs;
+    if (settings && settings.options) app.options = settings.options;
+  } catch { }
 })();
