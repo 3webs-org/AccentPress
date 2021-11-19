@@ -30,5 +30,8 @@
     ],
     "externally_connectable": {
       "matches": ["https://accentpress.pandapip1.com/*"]
-    }
+    },
+    "host_permissions": [
+        "https://www.google.com/complete/search*"
+    ]
 }
