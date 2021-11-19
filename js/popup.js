@@ -43,7 +43,7 @@ let app = new Vue({
 (async () => {
   let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
   if (!app.langs) app.langs = defaultOpts.langs;
-  if (!app.options) app.options = defaultOpts.options;
+  if (!app.options.speed) app.options = defaultOpts.options;
 })();
 (async () => {
   try {
