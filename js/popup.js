@@ -47,7 +47,7 @@ let app = new Vue({
 })();
 (async () => {
   try {
-    let settings = await getData();
+    let settings = await getData(app.accentPressId);
     app.detected = true;
     if (settings && settings.langs) app.langs = settings.langs;
     if (settings && settings.options) app.options = settings.options;
