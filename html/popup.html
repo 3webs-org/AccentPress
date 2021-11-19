@@ -6,6 +6,7 @@
   </head>
   <body class="p-3">
     <div id="app">
+      <button type="button" class="btn btn-danger" v-on:click="reset" style="position: absolute; top: 5px; right: 5px;">Reset Settings</button>
       <form id="languagesForm">
         <div class="col-sm-4" v-for="lang in Object.keys(langConfig)">
           <div class="form-check form-switch">
