@@ -42,7 +42,13 @@ let app = new Vue({
         {
           type: "RESET_DATA"
         },
-        response => response.success ? resolutionFunc() : rejectionFunc()
+        async response => {
+          if (!response.success) return;
+          let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+          app.langs = defaultOpts.langs;
+          app.options = defaultOpts.options;
+          setData(app.accentPressId, { langs: app.langs, options: app.options });
+        }
       )
     }
   }
