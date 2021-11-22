@@ -43,6 +43,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     if (chrome.runtime.setUninstallURL) {
       chrome.runtime.setUninstallURL(uninstallUrlLink);
     }
+    chrome.tabs.create({url: "https://accentpress.pandapip1.com/html/howto.html"}, () => {});
   }
 });
 
