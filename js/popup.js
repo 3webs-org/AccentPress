@@ -66,7 +66,7 @@ let app = new Vue({
       let settings = await getData(app.accentPressId);
       app.detected = true;
       if (settings && settings.langs) app.langs = settings.langs;
-      if (settings && settings.options) app.options = settings.options;
+      if (settings && settings.options && settings.options.speed) app.options = settings.options.speed;
     } catch { }
   })();
 })();
