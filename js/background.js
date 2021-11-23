@@ -37,7 +37,7 @@ async function track(event, props) {
       "body": new URLSearchParams({
         "data": JSON.stringify({ event, properties }),
         "verbose": 1
-      }, 2000);
+      }, 2000)
     }).then(response => response.json());
   } catch { }
 }
