@@ -81,9 +81,9 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     let storage_data_new = request.storage_data;
     // Make data
     let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-    let speed_old = (storage_data_old && storage_data_old.options && 'speed' in storage_data_old.options && !Number.isNaN(parseInt(storage_data_old.options.speed))) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
+    let speed_old = (storage_data_old && storage_data_old.options && storage_data_old.options.speed && !Number.isNaN(parseInt(storage_data_old.options.speed))) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
     let langs_old = (storage_data_old && 'langs' in storage_data_old) ? storage_data_old.langs : defaults.langs;
-    let speed_new = (storage_data_new && storage_data_new.options && 'speed' in storage_data_new.options && !Number.isNaN(parseInt(storage_data_new.options.speed))) ? parseInt(storage_data_new.options.speed) : speed_old;
+    let speed_new = (storage_data_new && storage_data_new.options && storage_data_new.options.speed && !Number.isNaN(parseInt(storage_data_new.options.speed))) ? parseInt(storage_data_new.options.speed) : speed_old;
     let langs_new = (storage_data_new && 'langs' in storage_data_new) ? storage_data_new.langs : langs_old;
     // Set new data
     await chrome.storage.sync.set({
