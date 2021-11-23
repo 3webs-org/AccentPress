@@ -59,7 +59,7 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     let storage_data_sync = await chrome.storage.sync.get(null);
     // Make data
     let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-    let speed = (storage_data_sync && 'options' in storage_data_sync && 'speed' in storage_data_sync.options && !Number.isNaN(parseInt(storage_data_sync.options.speed))) ? parseInt(storage_data_sync.options.speed) : defaults.options.speed;
+    let speed = (storage_data_sync && storage_data_sync.options && 'speed' in storage_data_sync.options && !Number.isNaN(parseInt(storage_data_sync.options.speed))) ? parseInt(storage_data_sync.options.speed) : defaults.options.speed;
     let langs = (storage_data_sync && 'langs' in storage_data_sync) ? storage_data_sync.langs : defaults.langs;
     // Send tracking event
     track('settings_open', {}).catch(() => {});
@@ -81,9 +81,9 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     let storage_data_new = request.storage_data;
     // Make data
     let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-    let speed_old = (storage_data_old && 'options' in storage_data_old && 'speed' in storage_data_old.options && !Number.isNaN(parseInt(storage_data_old.options.speed))) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
+    let speed_old = (storage_data_old && storage_data_old.options && 'speed' in storage_data_old.options && !Number.isNaN(parseInt(storage_data_old.options.speed))) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
     let langs_old = (storage_data_old && 'langs' in storage_data_old) ? storage_data_old.langs : defaults.langs;
-    let speed_new = (storage_data_new && 'options' in storage_data_new && 'speed' in storage_data_new.options && !Number.isNaN(parseInt(storage_data_new.options.speed))) ? parseInt(storage_data_new.options.speed) : speed_old;
+    let speed_new = (storage_data_new && storage_data_new.options && 'speed' in storage_data_new.options && !Number.isNaN(parseInt(storage_data_new.options.speed))) ? parseInt(storage_data_new.options.speed) : speed_old;
     let langs_new = (storage_data_new && 'langs' in storage_data_new) ? storage_data_new.langs : langs_old;
     // Set new data
     await chrome.storage.sync.set({
