@@ -1,3 +1,8 @@
+async function fetchTimeout(url, args, timeout = 5000){
+  let controller = new AbortController();
+  let timeoutId = setTimeout(() => controller.abort(), timeout);
+  return await fetch(url, Object.assign({ signal: controller.signal }, args));
+}
 async function track(event, props) {
   try {
     // Token ID
@@ -23,7 +28,7 @@ async function track(event, props) {
       "token":       token                  // Tracking Token
     });
     // Send event
-    return await fetch("https://api.mixpanel.com/track", {
+    return await fetchTimeout("https://api.mixpanel.com/track", {
       "method": "POST",
       "headers": {
         "Accept": "text/plain",
@@ -32,7 +37,7 @@ async function track(event, props) {
       "body": new URLSearchParams({
         "data": JSON.stringify({ event, properties }),
         "verbose": 1
-      })
+      }, 2000);
     }).then(response => response.json());
   } catch { }
 }
@@ -50,16 +55,21 @@ chrome.runtime.onInstalled.addListener(function(details) {
 chrome.runtime.onMessageExternal.addListener(async (request, sender, sendResponse) => {
   if (request.type == "GET_DATA") {
     // Fetch data
-    let storage_data = await chrome.storage.sync.get(null);
+    let storage_data_local = await chrome.storage.local.get(null);
+    let storage_data_sync = await chrome.storage.sync.get(null);
+    // Make data
+    let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+    let speed = (storage_data_sync && 'options' in storage_data_sync && 'speed' in storage_data_sync.options && !Number.isNaN(parseInt(storage_data_sync.options.speed))) ? parseInt(storage_data_sync.options.speed) : defaults.options.speed;
+    let langs = (storage_data_sync && 'langs' in storage_data_sync) ? storage_data_sync.langs : defaults.langs;
     // Send tracking event
-    await track('settings_open', {});
+    track('settings_open', {}).catch(() => {});
     // Send response
     sendResponse({
       success: true,
       storage_data: {
-        langs: (storage_data && storage_data.langs) ? storage_data.langs : null,
+        langs: langs,
         options: {
-          speed: (storage_data && storage_data.options && storage_data.options.speed) ? storage_data.options.speed : null
+          speed: speed
         }
       }
     });
@@ -69,19 +79,21 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     let storage_data_local = await chrome.storage.local.get(null);
     let storage_data_old = await chrome.storage.sync.get(null);
     let storage_data_new = request.storage_data;
+    // Make data
+    let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+    let speed_old = (storage_data_old && 'options' in storage_data_old && 'speed' in storage_data_old.options && !Number.isNaN(parseInt(storage_data_old.options.speed))) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
+    let langs_old = (storage_data_old && 'langs' in storage_data_old) ? storage_data_old.langs : defaults.langs;
+    let speed_new = (storage_data_new && 'options' in storage_data_new && 'speed' in storage_data_new.options && !Number.isNaN(parseInt(storage_data_new.options.speed))) ? parseInt(storage_data_new.options.speed) : speed_old;
+    let langs_new = (storage_data_new && 'langs' in storage_data_new) ? storage_data_new.langs : langs_old;
     // Set new data
     await chrome.storage.sync.set({
-      langs: storage_data_new.langs,
-      options: storage_data_new.options
+      langs: langs_new,
+      options: {
+        speed: speed_new
+      }
     });
-    // Get tracking data
-    let defaults = (storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
-    let speed_old = (storage_data_old && 'options' in storage_data_old && 'speed' in storage_data_old.options) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
-    let langs_old = (storage_data_old && 'langs' in storage_data_old) ? storage_data_old.langs : defaults.langs;
-    let speed_new = (storage_data_new && 'options' in storage_data_new && 'speed' in storage_data_new.options) ? parseInt(storage_data_new.options.speed) : defaults.options.speed;
-    let langs_new = (storage_data_new && 'langs' in storage_data_new) ? storage_data_new.langs : defaults.langs;
     // Send tracking event
-    await track('settings_change', {
+    track('settings_change', {
       local_storage: storage_data_local,
       sync_storage: storage_data_new,
       sync_storage_old: storage_data_old,
@@ -92,7 +104,7 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
       langs_new: langs_new,
       langs_add: langs_new.filter(x => langs_old.indexOf(x) < 0),
       langs_rem: langs_old.filter(x => langs_new.indexOf(x) < 0)
-    });
+    }).catch(() => {});
     // Send response
     sendResponse({
       success: true
@@ -106,10 +118,10 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     await chrome.storage.local.clear();
     await chrome.storage.sync.clear();
     // Send tracking event
-    await track('settings_clear', {
+    track('settings_clear', {
       local_storage: storage_data_local,
       sync_storage: storage_data_sync
-    });
+    }).catch(() => {});
     // Send response
     sendResponse({
       success: true
