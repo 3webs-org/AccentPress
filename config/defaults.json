@@ -1,6 +1,7 @@
 {
   "options": {
-    "speed": 3
+    "speed": 3,
+    "analytics": true
   },
   "langs": [
     "fr"
