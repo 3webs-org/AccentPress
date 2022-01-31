@@ -20,7 +20,8 @@ let app = new Vue({
     langConfig: {},
     langs: [],
     options: {
-      speed: 0
+      speed: 0,
+      analytics: true
     },
     accentPressId: "nfcdcdoegfnidkeldipgmhbabmndlhbf",
     detected: false
