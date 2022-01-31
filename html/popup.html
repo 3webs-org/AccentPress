@@ -7,12 +7,14 @@
   <body class="p-3">
     <div id="app">
       <span>Languages:</span><br/>
-      <form id="languagesForm" class="row">
-        <div class="col-2 form-check form-check-inline form-switch" v-for="lang in Object.keys(langConfig)">
-          <input class="form-check-input" type="checkbox" v-model="langs" v-bind:value="lang" v-bind:id="lang">
-          <label class="form-check-label" v-bind:for="lang">{{ langConfig[lang] }}</label>
-        </div>
-      </form>
+      <div class="d-flex justify-content-center align-items-center px-2">
+        <form id="languagesForm">
+          <div class="col-2 form-check form-check-inline form-switch" v-for="lang in Object.keys(langConfig)">
+            <input class="form-check-input" type="checkbox" v-model="langs" v-bind:value="lang" v-bind:id="lang">
+            <label class="form-check-label" v-bind:for="lang">{{ langConfig[lang] }}</label>
+          </div>
+        </form>
+      </div>
       <hr/>
       <form id="optionsForm">
         <label for="speed" class="form-label">Speed (higher is slower):</label>
