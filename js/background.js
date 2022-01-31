@@ -6,60 +6,66 @@ async function fetchTimeout(url, args, timeout = 5000){
 async function track(event, props) {
   try {
     // Token ID
-    let token = "a17adb469eb6c2dd0e78217022de6e9d";
+    let token = 'a17adb469eb6c2dd0e78217022de6e9d';
     // Generate random strings
     function genID(){
-      let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      let str = "";
+      let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let str = '';
       for (;str.length < 24;) str += characters.charAt(Math.random() * characters.length);
       return str;
     }
     // Generate user ID
-    let user_id = (await chrome.storage.sync.get('user_id')).user_id;
+    let sync_data = await chrome.storage.sync.get(null);
+    let user_id = sync_data.user_id;
     if (!user_id) {
       user_id = genID();
       await chrome.storage.sync.set({ user_id });
     }
     // Generate properties object
     let properties = Object.assign(Object.assign({}, props), {
-      "time":        Date.now() / 1000 | 0, // Timestamp in seconds
-      "distinct_id": user_id,               // User ID
-      "$insert_id":  genID(),               // Generate Event ID
-      "token":       token                  // Tracking Token
+      'time': Date.now() / 1000 | 0,
+      'distinct_id': user_id,
+      '$insert_id': genID(),
+      'token': token
     });
+    // Get if analytics are enabled
+    let do_analytics = sync_data.options && sync_data.options.analytics;
+    if (!do_analytics) {
+      return;
+    }
     // Send event
-    return await fetchTimeout("https://api.mixpanel.com/track", {
-      "method": "POST",
-      "headers": {
-        "Accept": "text/plain",
-        "Content-Type": "application/x-www-form-urlencoded"
+    return await fetchTimeout('https://api.mixpanel.com/track', {
+      'method': 'POST',
+      'headers': {
+        'Accept': 'text/plain',
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      "body": new URLSearchParams({
-        "data": JSON.stringify({ event, properties }),
-        "verbose": 1
+      'body': new URLSearchParams({
+        'data': JSON.stringify({ event, properties }),
+        'verbose': 1
       }, 2000)
     }).then(response => response.json());
   } catch { }
 }
 
 chrome.runtime.onInstalled.addListener(function(details) {
-  if (details.reason == "install") {
+  if (details.reason == 'install') {
     var uninstallUrlLink = 'https://forms.gle/h2djLMjEC88oK1vq9';
     if (chrome.runtime.setUninstallURL) {
       chrome.runtime.setUninstallURL(uninstallUrlLink);
     }
-    chrome.tabs.create({url: "https://accentpress.pandapip1.com/html/howto.html"}, () => {});
+    chrome.tabs.create({url: 'https://accentpress.pandapip1.com/html/howto.html'}, () => {});
   }
 });
 
 chrome.runtime.onMessageExternal.addListener(async (request, sender, sendResponse) => {
   try {
-    if (request.type == "GET_DATA") {
+    if (request.type == 'GET_DATA') {
       // Fetch data
       let storage_data_local = await chrome.storage.local.get(null);
       let storage_data_sync = await chrome.storage.sync.get(null);
       // Make data
-      let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+      let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout('https://accentpress.pandapip1.com/config/defaults.json').then(res => res.json());
       let speed = (storage_data_sync && storage_data_sync.options && 'speed' in storage_data_sync.options && !Number.isNaN(parseInt(storage_data_sync.options.speed))) ? parseInt(storage_data_sync.options.speed) : defaults.options.speed;
       let langs = (storage_data_sync && 'langs' in storage_data_sync) ? storage_data_sync.langs : defaults.langs;
       // Send tracking event
@@ -75,22 +81,25 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
         }
       });
     }
-    if (request.type == "SET_DATA") {
+    if (request.type == 'SET_DATA') {
       // Fetch data
       let storage_data_local = await chrome.storage.local.get(null);
       let storage_data_old = await chrome.storage.sync.get(null);
       let storage_data_new = request.storage_data;
       // Make data
-      let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+      let defaults = (storage_data_local && storage_data_local.cache && 'defaults' in storage_data_local.cache) ? storage_data_local.cache.defaults : await fetchTimeout('https://accentpress.pandapip1.com/config/defaults.json').then(res => res.json());
       let speed_old = (storage_data_old && storage_data_old.options && storage_data_old.options.speed && !Number.isNaN(parseInt(storage_data_old.options.speed))) ? parseInt(storage_data_old.options.speed) : defaults.options.speed;
       let langs_old = (storage_data_old && 'langs' in storage_data_old) ? storage_data_old.langs : defaults.langs;
+      let analytics_old = (storage_data_old && storage_data_old.options && 'analytics' in storage_data_old.options) ? storage_data_old.options.analytics : defaults.options.analytics;
       let speed_new = (storage_data_new && storage_data_new.options && storage_data_new.options.speed && !Number.isNaN(parseInt(storage_data_new.options.speed))) ? parseInt(storage_data_new.options.speed) : speed_old;
       let langs_new = (storage_data_new && 'langs' in storage_data_new) ? storage_data_new.langs : langs_old;
+      let analytics_new = (storage_data_new && storage_data_new.options && 'analytics' in storage_data_new.options) ? storage_data_new.options.analytics : analytics_old;
       // Set new data
       await chrome.storage.sync.set({
         langs: langs_new,
         options: {
-          speed: speed_new
+          speed: speed_new,
+          analytics: analytics_new
         }
       });
       // Send tracking event
@@ -111,7 +120,7 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
         success: true
       });
     }
-    if (request.type == "RESET_DATA") {
+    if (request.type == 'RESET_DATA') {
       // Fetch data
       let storage_data_local = await chrome.storage.local.get(null);
       let storage_data_sync = await chrome.storage.sync.get(null);
@@ -131,7 +140,7 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
   } catch (e) {
     // Automatic error reporting
     track('error_detected', {
-      location: "js.background.js-chrome.runtime.onMessageExternal",
+      location: 'js.background.js-chrome.runtime.onMessageExternal',
       error_msg: e.toString(),
       error_stack: e.stack
     }).catch(() => {});
