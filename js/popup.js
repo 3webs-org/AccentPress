@@ -1,7 +1,7 @@
 let setData = (accentPressId, storage_data) => new Promise((resolutionFunc, rejectionFunc) => chrome.runtime.sendMessage(
   accentPressId,
   {
-    type: "SET_DATA",
+    type: 'SET_DATA',
     storage_data: storage_data
   },
   response => response.success ? resolutionFunc() : rejectionFunc()
@@ -9,7 +9,7 @@ let setData = (accentPressId, storage_data) => new Promise((resolutionFunc, reje
 let getData = (accentPressId) => new Promise((resolutionFunc, rejectionFunc) => chrome.runtime.sendMessage(
   accentPressId,
   {
-    type: "GET_DATA"
+    type: 'GET_DATA'
   },
   response => response.success ? resolutionFunc(response.storage_data) : rejectionFunc()
 ));
@@ -23,7 +23,7 @@ let app = new Vue({
       speed: 0,
       analytics: true
     },
-    accentPressId: "nfcdcdoegfnidkeldipgmhbabmndlhbf",
+    accentPressId: 'nfcdcdoegfnidkeldipgmhbabmndlhbf',
     detected: false
   },
   watch: {
@@ -41,11 +41,11 @@ let app = new Vue({
       chrome.runtime.sendMessage(
         app.accentPressId,
         {
-          type: "RESET_DATA"
+          type: 'RESET_DATA'
         },
         async response => {
           if (!response.success) return;
-          let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+          let defaultOpts = await fetch('https://accentpress.pandapip1.com/config/defaults.json').then(res => res.json());
           app.langs = defaultOpts.langs;
           app.options = defaultOpts.options;
           setData(app.accentPressId, { langs: app.langs, options: app.options });
@@ -56,9 +56,9 @@ let app = new Vue({
 });
 
 (async () => {
-  app.langConfig = await fetch("https://accentpress.pandapip1.com/config/languages.json").then(res => res.json());
+  app.langConfig = await fetch('https://accentpress.pandapip1.com/config/languages.json').then(res => res.json());
   (async () => {
-    let defaultOpts = await fetch("https://accentpress.pandapip1.com/config/defaults.json").then(res => res.json());
+    let defaultOpts = await fetch('https://accentpress.pandapip1.com/config/defaults.json').then(res => res.json());
     if (!app.langs.length) app.langs = defaultOpts.langs;
     if (!app.options.speed) app.options = defaultOpts.options;
   })();
