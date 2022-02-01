@@ -89,7 +89,7 @@ jobs:
     name: Build GitHub Pages
     runs-on: ubuntu-latest
     if: success() && github.ref == 'refs/heads/main'
-    needs: buildpages
+    needs: codeql
     steps:
       - name: Checkout
         uses: actions/checkout@v2
