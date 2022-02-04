@@ -1,4 +1,4 @@
-async function fetchTimeout(url, args, timeout = 5000){
+async function fetchTimeout(url, args = {}, timeout = 5000){
   let controller = new AbortController();
   let timeoutId = setTimeout(() => controller.abort(), timeout);
   return await fetch(url, Object.assign({ signal: controller.signal }, args));
@@ -14,7 +14,7 @@ async function track(event, props) {
       for (;str.length < 24;) str += characters.charAt(Math.random() * characters.length);
       return str;
     }
-    // Generate user ID
+    // Generate user IDF
     let sync_data = await chrome.storage.sync.get(null);
     let user_id = sync_data.user_id;
     if (!user_id) {
