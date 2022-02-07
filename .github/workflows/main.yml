@@ -102,6 +102,7 @@ jobs:
           rm -f manifest.json
           rm -rf _locales
           rm -f js/inject.js
+          rm -f js/inject_gdoc.js
           rm -f js/background.js
 
           rm -f SECURITY.md
