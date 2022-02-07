@@ -46,11 +46,12 @@
   let prev = 0;
   document.addEventListener("keydown", e => {
     // Select only events that should be captured
-    if (!e || !e.key || !e.target || !("selectionStart" in e.target) || !("value" in e.target) || !(e.key in mappings)) return;
+    if (!e || !e.key || !e.target || !("selectionStart" in e.target) || !("value" in e.target || e.target.isContentEditable) || !(e.key in mappings)) return;
     let isActive = active[e.key];
     active[e.key] = true;
     if (!isActive) return;
-    let replacement = mappings[e.key][e.target.value[e.target.selectionStart-1]];
+    let propVal = "value" in e.target ? "value" : "innerHTML";
+    let replacement = mappings[e.key][e.target[propVal][e.target.selectionStart-1]];
     if (!replacement) return;
     // Only toggle letter every speed
     e.preventDefault();
@@ -60,10 +61,10 @@
     e.target.selectionStart -= 1;
     var start = e.target.selectionStart;
     var finish = e.target.selectionEnd;
-    var allText = e.target.value;
+    var allText = e.target[propVal];
     var sel = allText.substring(start, finish);
     var newText = allText.substring(0, start)+replacement+allText.substring(finish, allText.length);
-    e.target.value = newText;
+    e.target[propVal] = newText;
     e.target.selectionStart = finish;
     e.target.selectionEnd = finish;
   });
