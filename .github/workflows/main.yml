@@ -64,11 +64,6 @@ jobs:
           rm -f extension/.gitpod.yml
           rm -rf extension/.github
       
-      - name: Minify JS and CSS
-        uses: nizarmah/auto-minify@v2.1
-        with:
-          overwrite: true
-      
       - name: Build ZIP for Validation
         uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
