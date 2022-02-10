@@ -73,7 +73,7 @@
     if (!key) return; // If no key held, skip
     if (!selectionStart) return; // If no text selected, skip
     if (!selectionEnd) return; // If no text selected, skip
-    if (!target[propVal]) return; // If the target doesn't have the right property, skip
+    if (!(propVal in target)) return; // If the target doesn't have the right property, skip
     if (!(key in mappings)) return; // If the key isn't in the mappings, skip
     if (!isRawInput && !window.getSelection().getRangeAt(0).collapsed) return; // If the selection isn't collapsed, skip
     
