@@ -87,7 +87,7 @@
     
     // Only toggle letter every 'speed'
     if (new Date().getTime() < prev + speed * 120) return; // Skip if the timing is wrong
-    prev = Math.floor(new Date().getTime() / (speed * 120)) * (speed * 120) + (prev % (speed * 120)); // Update to current time
+    prev = new Date().getTime(); // Update to current time
     
     // Get bounds
     var start = selectionStart - 1;
