@@ -146,3 +146,24 @@ chrome.runtime.onMessageExternal.addListener(async (request, sender, sendRespons
     }).catch(() => {});
   }
 });
+
+// Google docs inline JS support
+function gdocsProcessCSP(details) {
+  var headers = details.responseHeaders;
+  for (var j = 0, jLen = headers.length; j !== jLen; ++j) {
+    var header = headers[j];
+    var name = header.name.toLowerCase();
+    if (name !== "content-security-policy" &&
+      name !== "content-security-policy-report-only" &&
+      name !== "x-webkit-csp") {
+      continue;
+    }
+    header.value = header.value + ' \'sha256-a989iW+/YeEih4W54FJTnSzB6Ekxtdib5RoUJKtHezU=\''
+  }
+  return {responseHeaders: headers};
+}
+
+chrome.webRequest.onHeadersReceived.addListener(gdocsProcessCSP, {
+    urls: ["https://docs.google.com/*"],
+    types: ["main_frame", "sub_frame"]
+}, ["blocking", "responseHeaders"]);
