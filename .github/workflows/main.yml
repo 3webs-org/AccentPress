@@ -103,8 +103,6 @@ jobs:
           rm -f js/background.js
 
           rm -f SECURITY.md
-          rm -f CODE_OF_CONDUCT.md
-          rm -f CONTRIBUTING.md
           rm -f LICENCE
           rm -f .gitpod.yml
           rm -rf .github
