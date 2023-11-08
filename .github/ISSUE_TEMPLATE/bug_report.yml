@@ -70,9 +70,10 @@ body:
       options:
         - Windows
         - Mac OS X
-        - Ubuntu-based Linux
-        - Debian-based Linux
+        - Debian-based Linux (Debian, Ubuntu, etc...)
+        - Red Hat-based Linux (RHEL, Fedora, etc...)
         - Chrome OS
+        - Android
   - type: dropdown
     id: browsers
     attributes:
