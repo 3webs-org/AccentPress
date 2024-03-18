@@ -72,6 +72,7 @@ body:
         - Mac OS X
         - Debian-based Linux (Debian, Ubuntu, etc...)
         - Red Hat-based Linux (RHEL, Fedora, etc...)
+        - Other Linux (NixOS, etc...)
         - Chrome OS
         - Android
   - type: dropdown
