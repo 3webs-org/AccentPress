@@ -116,5 +116,5 @@
   document.addEventListener("keyup", e => {
     active[e.key] = false;
     toggle[e.key] = 0;
-  });
+  }, true);
 })();
