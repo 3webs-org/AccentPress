@@ -89,7 +89,7 @@ body:
   - type: input
     id: browversion
     attributes:
-      label: What browser versions are you seeing the problem on? See: chrome://settings/help
+      label: "What browser versions are you seeing the problem on? See: chrome://settings/help"
     validations:
       required: true
   - type: textarea
